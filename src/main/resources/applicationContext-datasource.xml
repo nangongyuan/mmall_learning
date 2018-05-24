@@ -3,31 +3,21 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
        xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
-     http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
      http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
 
-    <context:component-scan base-package="com.mmall" annotation-config="true"/>
 
-    <bean id="propertyConfigurer"
-          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
-        <property name="order" value="2"/>
-        <property name="ignoreUnresolvablePlaceholders" value="true"/>
-        <property name="locations">
-            <list>
-                <value>classpath:datasource.properties</value>
-            </list>
-        </property>
-        <property name="fileEncoding" value="utf-8"/>
-    </bean>
+    <!--1.配置数据库相关参数-->
+    <context:property-placeholder location="classpath:datasource.properties" system-properties-mode="NEVER"/>
+
 
     <!--数据库的连接池-->
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
         <!-- 基本属性 url、userDO、password -->
         <property name="url" value="${db.url}"/>
-        <property name="username" value="${db.username}"/>
+        <property name="username" value="${db.url}"/>
         <property name="password" value="${db.password}"/>
 
         <!-- 配置初始化大小、最小、最大 -->
@@ -58,6 +48,8 @@
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations" value="classpath*:mappers/*Mapper.xml"></property>
+
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
 
         <!-- 分页插件 -->
         <property name="plugins">
